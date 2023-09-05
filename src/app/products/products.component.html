@@ -1,0 +1,62 @@
+<div class="container">
+    <nav class="p-2 m-2 border border-info">
+        <button *ngIf="authService.hasRole('ADMIN')" class="btn btn-outline-info" (click)="HandleNewProduct()">New Product</button>
+    </nav>
+
+    <ng-template #error>
+        <div class="text-danger"> {{errorMessage}}</div>
+    </ng-template>
+
+    <div class="card" *ngIf="products;else error">
+        <div class="card-header">
+            Product List
+        </div>
+        <div class="card-body">
+            {{searchFormGroup.value |json}}
+            <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchProduct()" >
+                <div class="input-group">
+                    <label class="input-group-text">
+                        Keyword:
+                    </label>
+                    <input type="text" formControlName="Keyword" class="form-control">
+                    <button class="btn btn-info">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+            <table class="table">
+
+                <thead>
+                    <th>Id</th><th>Name</th><th>Price</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of products">
+                        <td>{{p.id}}</td>
+                        <td>{{p.name}}</td>
+                        <td>{{p.price}}</td>
+                        <td>
+                            <div *ngIf="p.promotion==true"  class="bi bi-heart-fill text-success"></div>
+                        </td>
+                        <td>
+                            <button (click)="HandleSetPromotion(p)" [ngClass]="p.promotion==true?'btn-danger':'btn-success'" class="btn">
+                                    <span *ngIf="p.promotion==true">Promo Off</span>
+                                    <span *ngIf="p.promotion==false">Promo on</span>
+                            </button>
+                        </td>
+                        <td *ngIf="authService.hasRole('ADMIN')">
+                            <button (click)="HandleDeleteProduct(p)" class="btn btn-danger">
+                                <i class="bi bi-trash "></i>
+                            </button>
+                        </td>
+                        <td *ngIf="authService.hasRole('ADMIN')">
+                            <button (click)="HandleEditProduct(p)" class="btn btn-success">
+                                <i class="bi bi-file "></i>
+                            </button>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
